@@ -60,6 +60,9 @@ body{
 width: 60px;
 height: 60px;
 	}
+	&__play{
+		display: none;
+	}
 }
 .button:hover{
 	transform: scale(1.2);
