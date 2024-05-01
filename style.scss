@@ -17,7 +17,7 @@ body{
 .car{
 		position: absolute;
 		width: 75px;
-		bottom: 0;
+		transform: translateY(75vh);
 }
 .tree{
 	position: absolute;
