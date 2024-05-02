@@ -5,11 +5,21 @@
   const trees = document.querySelectorAll('.tree');
   const button = document.querySelector('.button');
   const road = document.querySelector('.road');
+  const coin = document.querySelector('.coin');
+  const arrow = document.querySelector('.arrow');
+  const danger = document.querySelector('.danger');
+
   const roadHeight = road.clientHeight;
   const roadWidthHalf = road.clientWidth / 2;
   const carHeight = car.clientHeight;
   const carWidth = car.clientWidth;
   const carWidhtHalf = carWidth / 2;
+  const coinWidhtHalf = coin.clientWidth / 2;
+  const arrowWidhtHalf = arrow.clientWidth / 2;
+  const dangerWidthHalf = danger.clientWidth / 2;
+  const coinCoordinate = getCoord(coin);
+  const arrowCoordinate = getCoord(arrow);
+  const dangerCoordinate = getCoord(danger);
   const speed = 3;
   const treesCoordinate = [];
   animationId = requestAnimationFrame(startGame);
@@ -132,8 +142,24 @@
 
   function startGame() {
     treesAnimation();
-
+    elementAnimation(coin, coinCoordinate, coinWidhtHalf, 250);
+    elementAnimation(danger, dangerCoordinate, dangerWidthHalf, 300);
+    elementAnimation(arrow, arrowCoordinate, arrowWidhtHalf, 400);
     animationId = requestAnimationFrame(startGame);
+  }
+
+  function elementAnimation(element, elementCoordinate, elementWidthHalf, y) {
+    let newCoordY = elementCoordinate.y + 3;
+    let newCoordX = elementCoordinate.x;
+    if (newCoordY > window.innerHeight) {
+      newCoordY = -y;
+      let direction = parsInt(Math.random() * 2);
+      let randomX = parseInt(Math.random() * (roadWidthHalf + 1 - elementWidthHalf));
+      newCoordX = direction === 0 ? -randomX : randomX;
+    }
+    elementCoordinate.x = newCoordX;
+    elementCoordinate.y = newCoordY;
+    element.style.transform = `translate(${newCoordX}px,${newCoordY}px)`;
   }
 
   button.addEventListener('click', () => {
