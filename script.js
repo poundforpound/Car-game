@@ -4,6 +4,12 @@
   const car = document.querySelector('.car');
   const trees = document.querySelectorAll('.tree');
   const button = document.querySelector('.button');
+  const road = document.querySelector('.road');
+  const roadHeight = road.clientHeight;
+  const roadWidthHalf = road.clientWidth / 2;
+  const carHeight = car.clientHeight;
+  const carWidth = car.clientWidth;
+  const carWidhtHalf = carWidth / 2;
   const speed = 3;
   const treesCoordinate = [];
   animationId = requestAnimationFrame(startGame);
@@ -17,14 +23,29 @@
     right: null,
   };
   document.addEventListener('keydown', (event) => {
+    if (isPause) {
+      return;
+    }
     const code = event.code;
     if (code === 'ArrowUp' && carInfoMove.top === null) {
+      if (carInfoMove.bottom) {
+        return;
+      }
       carInfoMove.top = requestAnimationFrame(carMoveToTop);
     } else if (code === 'ArrowDown' && carInfoMove.bottom === null) {
+      if (carInfoMove.top) {
+        return;
+      }
       carInfoMove.bottom = requestAnimationFrame(carMoveToBottom);
     } else if (code === 'ArrowLeft' && carInfoMove.left === null) {
+      if (carInfoMove.right) {
+        return;
+      }
       carInfoMove.left = requestAnimationFrame(carMoveToLeft);
     } else if (code === 'ArrowRight' && carInfoMove.right === null) {
+      if (carInfoMove.left) {
+        return;
+      }
       carInfoMove.right = requestAnimationFrame(carMoveToRight);
     }
   });
@@ -48,6 +69,9 @@
   function carMoveToTop() {
     const coordY = carCoordinate.y;
     const newCoordY = coordY - 3;
+    if (newCoordY < 0) {
+      return;
+    }
     carCoordinate.y = newCoordY;
     car.style.transform = `translate(${carCoordinate.x}px,${newCoordY}px)`;
     carInfoMove.top = requestAnimationFrame(carMoveToTop);
@@ -55,6 +79,9 @@
   function carMoveToBottom() {
     const coordY = carCoordinate.y;
     const newCoordY = coordY + 3;
+    if (newCoordY + carHeight > roadHeight) {
+      return;
+    }
     carCoordinate.y = newCoordY;
     car.style.transform = `translate(${carCoordinate.x}px,${newCoordY}px)`;
     carInfoMove.bottom = requestAnimationFrame(carMoveToBottom);
@@ -62,6 +89,9 @@
   function carMoveToLeft() {
     const coordX = carCoordinate.x;
     const newCoordX = coordX - 3;
+    if (newCoordX < -roadWidthHalf + carWidhtHalf) {
+      return;
+    }
     carCoordinate.x = newCoordX;
     car.style.transform = `translate(${newCoordX}px,${carCoordinate.y}px)`;
     carInfoMove.left = requestAnimationFrame(carMoveToLeft);
@@ -69,6 +99,9 @@
   function carMoveToRight() {
     const coordX = carCoordinate.x;
     const newCoordX = coordX + 3;
+    if (newCoordX > roadWidthHalf - carWidhtHalf) {
+      return;
+    }
     carCoordinate.x = newCoordX;
     car.style.transform = `translate(${newCoordX}px,${carCoordinate.y}px)`;
     carInfoMove.right = requestAnimationFrame(carMoveToRight);
@@ -107,6 +140,10 @@
     isPause = !isPause;
     if (isPause) {
       cancelAnimationFrame(animationId);
+      cancelAnimationFrame(carInfoMove.top);
+      cancelAnimationFrame(carInfoMove.bottom);
+      cancelAnimationFrame(carInfoMove.left);
+      cancelAnimationFrame(carInfoMove.right);
       button.children[0].style.display = 'none';
       button.children[1].style.display = 'block';
     } else {
