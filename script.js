@@ -11,6 +11,8 @@
   const arrow = document.querySelector('.arrow');
   const danger = document.querySelector('.danger');
   const gameScore = document.querySelector('.game-score');
+  const finishGameWindow = document.querySelector('.finish-game');
+  const restartButton = document.querySelector('.finish-game__button');
 
   const carInfo = {
     ...createElementInfo(car),
@@ -38,9 +40,9 @@
   }
   //car logic
   document.addEventListener('keydown', (event) => {
-    // if (isPause) {
-    //   return;
-    // }
+    if (isPause) {
+      return;
+    }
     const code = event.code;
     if (code === 'ArrowUp' && carInfo.move.top === null) {
       if (carInfo.move.bottom) {
@@ -106,9 +108,9 @@
   function carMoveToLeft() {
     const coordX = carInfo.coordinate.x;
     const newCoordX = coordX - 3;
-    // if (newCoordX < -roadWidthHalf + carInfo.widhtHalf) {
-    //   return;
-    // }
+    if (newCoordX < -roadWidthHalf + carInfo.widthHalf) {
+      return;
+    }
     carInfo.coordinate.x = newCoordX;
     carMove(newCoordX, carInfo.coordinate.y);
     // car.style.transform = `translate(${newCoordX}px,${carInfo.coordinate.y}px)`;
@@ -117,9 +119,9 @@
   function carMoveToRight() {
     const coordX = carInfo.coordinate.x;
     const newCoordX = coordX + 3;
-    // if (newCoordX > roadWidthHalf - carInfo.widhtHalf) {
-    //   return;
-    // }
+    if (newCoordX > roadWidthHalf - carInfo.widthHalf) {
+      return;
+    }
     carInfo.coordinate.x = newCoordX;
     carMove(newCoordX, carInfo.coordinate.y);
     // car.style.transform = `translate(${newCoordX}px,${carInfo.coordinate.y}px)`;
@@ -152,10 +154,13 @@
   }
 
   function startGame() {
+    elementAnimation(danger, dangerInfo, 300);
+    if (hasCollision(carInfo, dangerInfo)) {
+      return finishGames();
+    }
     treesAnimation();
     elementAnimation(coin, coinInfo, 250);
-    // elementAnimation(danger, dangerInfo.coordinaterdinate, dangerInfo.widthHalf, 300);
-    // elementAnimation(arrow, arrowInfo.coordinate, arrowInfo.widthHalfhtHalf, 400);
+    // elementAnimation(arrow, arrowInfo, 400);
     if (coinInfo.visible && hasCollision(carInfo, coinInfo)) {
       score++;
       gameScore.textContent = score;
@@ -203,15 +208,25 @@
     elementInfo.coordinate.y = newCoordY;
     element.style.transform = `translate(${newCoordX}px,${newCoordY}px)`;
   }
-
+  function cancelAnimation() {
+    cancelAnimationFrame(animationId);
+    cancelAnimationFrame(carInfo.move.top);
+    cancelAnimationFrame(carInfo.move.bottom);
+    cancelAnimationFrame(carInfo.move.left);
+    cancelAnimationFrame(carInfo.move.right);
+  }
+  function finishGames() {
+    cancelAnimation();
+    finishGameWindow.style.display = 'flex';
+    const finishScore = document.querySelector('.finish-text-score');
+    finishScore.innerHTML = score;
+    button.style.display = 'none';
+    gameScore.style.display = 'none';
+  }
   button.addEventListener('click', () => {
     isPause = !isPause;
     if (isPause) {
-      cancelAnimationFrame(animationId);
-      cancelAnimationFrame(carInfo.move.top);
-      cancelAnimationFrame(carInfo.move.bottom);
-      cancelAnimationFrame(carInfo.move.left);
-      cancelAnimationFrame(carInfo.move.right);
+      cancelAnimation();
       button.children[0].style.display = 'none';
       button.children[1].style.display = 'block';
     } else {
@@ -219,5 +234,8 @@
       button.children[0].style.display = 'block';
       button.children[1].style.display = 'none';
     }
+  });
+  restartButton.addEventListener('click', () => {
+    window.location.reload();
   });
 })();
