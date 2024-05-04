@@ -18,6 +18,7 @@ body{
 		position: absolute;
 		width: 75px;
 		transform: translateY(75vh);
+		border: 1px solid green;
 }
 .tree{
 	position: absolute;
@@ -79,6 +80,7 @@ height: 60px;
 	position: absolute;
 	width: 50px;
 	transform: translate(50px,-100px);
+	border: 1px solid red;
 }
 .danger{
 	position: absolute;

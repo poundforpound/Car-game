@@ -6,8 +6,8 @@
   const button = document.querySelector('.button');
   const road = document.querySelector('.road');
   const coin = document.querySelector('.coin');
-  const arrow = document.querySelector('.arrow');
-  const danger = document.querySelector('.danger');
+  // const arrow = document.querySelector('.arrow');
+  // const danger = document.querySelector('.danger');
 
   const roadHeight = road.clientHeight;
   const roadWidthHalf = road.clientWidth / 2;
@@ -15,11 +15,12 @@
   const carWidth = car.clientWidth;
   const carWidhtHalf = carWidth / 2;
   const coinWidhtHalf = coin.clientWidth / 2;
-  const arrowWidhtHalf = arrow.clientWidth / 2;
-  const dangerWidthHalf = danger.clientWidth / 2;
+  const coinHight = coin.clientHeight;
+  // const arrowWidhtHalf = arrow.clientWidth / 2;
+  // const dangerWidthHalf = danger.clientWidth / 2;
   const coinCoordinate = getCoord(coin);
-  const arrowCoordinate = getCoord(arrow);
-  const dangerCoordinate = getCoord(danger);
+  // const arrowCoordinate = getCoord(arrow);
+  // const dangerCoordinate = getCoord(danger);
   const speed = 3;
   const treesCoordinate = [];
   animationId = requestAnimationFrame(startGame);
@@ -33,9 +34,9 @@
     right: null,
   };
   document.addEventListener('keydown', (event) => {
-    if (isPause) {
-      return;
-    }
+    // if (isPause) {
+    //   return;
+    // }
     const code = event.code;
     if (code === 'ArrowUp' && carInfoMove.top === null) {
       if (carInfoMove.bottom) {
@@ -83,7 +84,8 @@
       return;
     }
     carCoordinate.y = newCoordY;
-    car.style.transform = `translate(${carCoordinate.x}px,${newCoordY}px)`;
+    carMove(carCoordinate.x, newCoordY);
+    // car.style.transform = `translate(${carCoordinate.x}px,${newCoordY}px)`;
     carInfoMove.top = requestAnimationFrame(carMoveToTop);
   }
   function carMoveToBottom() {
@@ -93,27 +95,30 @@
       return;
     }
     carCoordinate.y = newCoordY;
-    car.style.transform = `translate(${carCoordinate.x}px,${newCoordY}px)`;
+    carMove(carCoordinate.x, newCoordY);
+    // car.style.transform = `translate(${carCoordinate.x}px,${newCoordY}px)`;
     carInfoMove.bottom = requestAnimationFrame(carMoveToBottom);
   }
   function carMoveToLeft() {
     const coordX = carCoordinate.x;
     const newCoordX = coordX - 3;
-    if (newCoordX < -roadWidthHalf + carWidhtHalf) {
-      return;
-    }
+    // if (newCoordX < -roadWidthHalf + carWidhtHalf) {
+    //   return;
+    // }
     carCoordinate.x = newCoordX;
-    car.style.transform = `translate(${newCoordX}px,${carCoordinate.y}px)`;
+    carMove(newCoordX, carCoordinate.y);
+    // car.style.transform = `translate(${newCoordX}px,${carCoordinate.y}px)`;
     carInfoMove.left = requestAnimationFrame(carMoveToLeft);
   }
   function carMoveToRight() {
     const coordX = carCoordinate.x;
     const newCoordX = coordX + 3;
-    if (newCoordX > roadWidthHalf - carWidhtHalf) {
-      return;
-    }
+    // if (newCoordX > roadWidthHalf - carWidhtHalf) {
+    //   return;
+    // }
     carCoordinate.x = newCoordX;
-    car.style.transform = `translate(${newCoordX}px,${carCoordinate.y}px)`;
+    carMove(newCoordX, carCoordinate.y);
+    // car.style.transform = `translate(${newCoordX}px,${carCoordinate.y}px)`;
     carInfoMove.right = requestAnimationFrame(carMoveToRight);
   }
   function getCoord(element) {
@@ -125,7 +130,10 @@
     const coordX = parseFloat(x);
     return { x: coordX, y: coordY };
   }
-
+  function carMove(x, y) {
+    console.log(hasCollision());
+    car.style.transform = `translate(${x}px,${y}px)`;
+  }
   function treesAnimation() {
     trees.forEach((el) => {
       const coordinate = getCoord(el);
@@ -143,9 +151,29 @@
   function startGame() {
     treesAnimation();
     elementAnimation(coin, coinCoordinate, coinWidhtHalf, 250);
-    elementAnimation(danger, dangerCoordinate, dangerWidthHalf, 300);
-    elementAnimation(arrow, arrowCoordinate, arrowWidhtHalf, 400);
+    // elementAnimation(danger, dangerCoordinate, dangerWidthHalf, 300);
+    // elementAnimation(arrow, arrowCoordinate, arrowWidhtHalf, 400);
     animationId = requestAnimationFrame(startGame);
+  }
+  function hasCollision() {
+    // X is on center of the page that X calculate another way
+    const carYTop = carCoordinate.y;
+    const carYBottom = carCoordinate.y + carHeight;
+    const carXLeft = carCoordinate.x - carWidhtHalf;
+    const carXRight = carCoordinate.x + carWidhtHalf;
+
+    const coinYTop = coinCoordinate.y;
+    const coinYBottom = coinCoordinate.y + coinHight;
+    const coinXLeft = coinCoordinate.x - coinWidhtHalf;
+    const coinXRight = coinCoordinate.x + coinWidhtHalf;
+
+    if (carYTop > coinYBottom || carYBottom < coinYTop) {
+      return false;
+    }
+    if (carXLeft > coinXRight || carXRight < coinXLeft) {
+      return false;
+    }
+    return true;
   }
 
   function elementAnimation(element, elementCoordinate, elementWidthHalf, y) {
@@ -153,7 +181,7 @@
     let newCoordX = elementCoordinate.x;
     if (newCoordY > window.innerHeight) {
       newCoordY = -y;
-      let direction = parsInt(Math.random() * 2);
+      let direction = parseInt(Math.random() * 2);
       let randomX = parseInt(Math.random() * (roadWidthHalf + 1 - elementWidthHalf));
       newCoordX = direction === 0 ? -randomX : randomX;
     }
